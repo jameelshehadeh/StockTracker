@@ -12,4 +12,5 @@ protocol WebSocketClient {
     func disconnect()
     func send(_ message: String) async throws
     func receive() -> AsyncStream<String>
+    func observeConnection() -> AsyncStream<SocketConnectionState>
 }

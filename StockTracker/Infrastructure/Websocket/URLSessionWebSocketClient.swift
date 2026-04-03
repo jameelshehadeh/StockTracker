@@ -11,19 +11,26 @@ final class URLSessionWebSocketClient: WebSocketClient {
     private var task: URLSessionWebSocketTask?
     private let url: URL
     
+    private var connectionContinuation: AsyncStream<SocketConnectionState>.Continuation?
+    
     init(url: URL) {
         self.url = url
     }
     
     func connect() async throws {
+        connectionContinuation?.yield(.disconnected)
+        
         let session = URLSession(configuration: .default)
         task = session.webSocketTask(with: url)
         task?.resume()
+        
+        connectionContinuation?.yield(.connected)
     }
     
     func disconnect() {
         task?.cancel(with: .goingAway, reason: nil)
         task = nil
+        connectionContinuation?.yield(.disconnected)
     }
     
     func send(_ message: String) async throws {
@@ -46,9 +53,21 @@ final class URLSessionWebSocketClient: WebSocketClient {
                         }
                     } catch {
                         continuation.finish()
+                        self.connectionContinuation?.yield(.disconnected)
                         break
                     }
                 }
+            }
+        }
+    }
+    
+    func observeConnection() -> AsyncStream<SocketConnectionState> {
+        AsyncStream { continuation in
+            self.connectionContinuation = continuation
+            if task != nil {
+                continuation.yield(.connected)
+            } else {
+                continuation.yield(.disconnected)
             }
         }
     }
