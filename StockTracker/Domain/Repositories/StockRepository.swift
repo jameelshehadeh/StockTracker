@@ -10,6 +10,6 @@ import Foundation
 protocol StockRepository {
     var priceUpdates: AsyncStream<Stock> { get }
     func getStocks() async throws -> [Stock]
-    func startPriceFeed() async throws
+    func startPriceFeed(with symbols: [String]) async throws
     func stopPriceFeed()
 }
