@@ -28,23 +28,13 @@ struct StockListView: View {
             }
             .navigationTitle("Stocks")
             .safeAreaInset(edge: .bottom) {
-                Button {
-                    if viewModel.connectionState == .connected {
-                        viewModel.stopFeed()
-                    } else {
-                        Task {
-                            await viewModel.startFeed()
-                        }
+                FeedControlButton.init(connectionState: viewModel.connectionState, startFeed: {
+                    Task {
+                        await viewModel.startFeed()
                     }
-                } label: {
-                    Text(viewModel.connectionState == .connected ? "Stop Feed" : "Start Feed")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(viewModel.connectionState == .connected ? Color.red : Color.green)
-                        .foregroundStyle(.white)
-                        .cornerRadius(12)
-                }
+                }, stopFeed: {
+                    viewModel.stopFeed()
+                })
                 .padding()
             }
             .toolbar {
@@ -61,21 +51,5 @@ struct StockListView: View {
                 await viewModel.onAppear()
             }
         }
-    }
-    
-    private var feedControlButton: some View {
-        Button {
-            if viewModel.connectionState == .connected {
-                viewModel.stopFeed()
-            } else {
-                Task {
-                    await viewModel.startFeed()
-                }
-            }
-        } label: {
-            Text(viewModel.connectionState == .connected ? "Stop Feed" : "Start Feed")
-                .font(.headline)
-        }
-        .tint(viewModel.connectionState == .connected ? .red : .green)
     }
 }
