@@ -20,7 +20,7 @@ struct StockListView: View {
         NavigationStack {
             List(viewModel.stocks) { stock in
                 Button {
-
+                    
                 } label: {
                     StockRowView(stock: stock)
                 }
@@ -49,7 +49,7 @@ struct StockListView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    connectionStatusView
+                    SocketConnectionCustomView(connectionState: viewModel.connectionState)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     CustomSortMenu(selectedSortType: viewModel.selectedSortOption) { selectedSortOption in
@@ -60,16 +60,6 @@ struct StockListView: View {
             .task {
                 await viewModel.onAppear()
             }
-        }
-    }
-    
-    private var connectionStatusView: some View {
-        HStack(spacing: 4) {
-            Circle()
-                .fill(viewModel.connectionState == .connected ? Color.green : Color.red)
-                .frame(width: 10, height: 10)
-            Text(viewModel.connectionState == .connected ? "Connected" : "Disconnected")
-                .font(.caption)
         }
     }
     
