@@ -9,9 +9,23 @@ import SwiftUI
 
 @main
 struct StockTrackerApp: App {
+    
+    private let container: DependencyContainer
+    
+    init() {
+        let webSocketClient = URLSessionWebSocketClient(
+            url: URL(string: "wss://ws.postman-echo.com/raw")!
+        )
+        let appState = SharedStateService(webSocket: webSocketClient)
+        container = DependencyContainer(
+            appState: appState,
+            webSocketClient: webSocketClient
+        )
+    }
+    
     var body: some Scene {
         WindowGroup {
-            StockListView()
+                container.flows.stockFlow.stockListScreen()
         }
     }
 }

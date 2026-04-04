@@ -25,4 +25,12 @@ final class StockFlow {
         self.webSocketClient = webSocketClient
     }
 
+    func stockListScreen() -> some View {
+        let viewModel = StockListViewModel(
+            appState: appState,
+            stockFeedUseCase: stockFeedUseCase
+        )
+        return StockListView(viewModel: viewModel)
+    }
+    
 }
