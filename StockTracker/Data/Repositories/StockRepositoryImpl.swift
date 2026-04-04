@@ -8,6 +8,14 @@
 import Foundation
 
 final class StockRepositoryImpl: StockRepository {
+    
+    enum StockRepositoryError: Error {
+        case encodingFailed
+        case decodingFailed
+        case failedConnectingToSocket
+        case couldntLoadStocks
+    }
+    
     private let webSocketClient: WebSocketClient
     private let randomGenerator: StockPriceGenerating
     private var wsTask: Task<Void, Never>?
@@ -31,7 +39,7 @@ final class StockRepositoryImpl: StockRepository {
         guard let url = Bundle.main.url(forResource: "stocks", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let stocks = try? JSONDecoder().decode([StockDTO].self, from: data) else {
-            return []
+            throw StockRepositoryError.couldntLoadStocks
         }
         return stocks.map {
             Stock(
@@ -46,7 +54,12 @@ final class StockRepositoryImpl: StockRepository {
     }
     
     func startPriceFeed(with symbols: [String]) async throws {
-        try await connectAndListen()
+        do {
+            try await webSocketClient.connect()
+        } catch {
+            throw StockRepositoryError.failedConnectingToSocket
+        }
+        listen()
         startRandomStockGeneration(symbols)
     }
     
@@ -55,12 +68,11 @@ final class StockRepositoryImpl: StockRepository {
         stopListening()
     }
     
-    func connectAndListen() async throws {
-        try await webSocketClient.connect()
+    func listen() {
         wsTask = Task { [weak self] in
             guard let self else { return }
             for await message in self.webSocketClient.receive() {
-                if let stock = self.decode(message) {
+                if let stock = try? self.decode(message) {
                     self.continuation?.yield(stock)
                 }
             }
@@ -77,7 +89,7 @@ final class StockRepositoryImpl: StockRepository {
         randomGenerator.start(symbols: symbols) { [weak self] stock in
             guard let self else { return }
             Task {
-                await self.sendPriceUpdate(stock)
+                try? await self.sendPriceUpdate(stock)
             }
         }
     }
@@ -86,22 +98,28 @@ final class StockRepositoryImpl: StockRepository {
         randomGenerator.stop()
     }
     
-    private func sendPriceUpdate(_ stock: Stock) async {
+    private func sendPriceUpdate(_ stock: Stock) async throws {
         let update = PriceUpdate(symbol: stock.symbol, price: stock.price)
+        let message = try encode(update)
+        try? await webSocketClient.send(message)
+    }
+    
+    private func encode(_ priceUpdate: PriceUpdate) throws -> String {
         do {
-            let data = try JSONEncoder().encode(update)
-            if let message = String(data: data, encoding: .utf8) {
-                try await webSocketClient.send(message)
+            let data = try JSONEncoder().encode(priceUpdate)
+            guard let message = String(data: data, encoding: .utf8) else {
+                throw StockRepositoryImpl.StockRepositoryError.encodingFailed
             }
+            return message
         } catch {
-            print("Encoding error: \(error)")
+            throw error
         }
     }
     
-    private func decode(_ message: String) -> Stock? {
+    private func decode(_ message: String) throws -> Stock {
         guard let data = message.data(using: .utf8),
               let update = try? JSONDecoder().decode(PriceUpdate.self, from: data) else {
-            return nil
+            throw StockRepositoryError.decodingFailed
         }
         return Stock(
             id: update.symbol,
