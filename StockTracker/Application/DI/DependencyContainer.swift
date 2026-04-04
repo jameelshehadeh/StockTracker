@@ -11,17 +11,17 @@ final class DependencyContainer {
 
     let appState: SharedStateService
     let webSocketClient: WebSocketClient
+    let appConfiguration: AppConfiguration
     private(set) var flows: Flows
-    
+
     init(
-        appState: SharedStateService,
-        webSocketClient: WebSocketClient
+        appConfiguration: AppConfiguration = .init()
     ) {
-        self.appState = appState
-        self.webSocketClient = webSocketClient
+        self.appConfiguration = appConfiguration
+        self.webSocketClient = URLSessionWebSocketClient(url: appConfiguration.socketBaseURL)
+        self.appState = SharedStateService(webSocket: webSocketClient)
         self.flows = Flows(stockFlow: .init(appState: appState, webSocketClient: webSocketClient))
     }
-    
 }
 
 extension DependencyContainer {
@@ -29,4 +29,3 @@ extension DependencyContainer {
         let stockFlow: StockFlow
     }
 }
-

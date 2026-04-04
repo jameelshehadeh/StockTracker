@@ -1,0 +1,12 @@
+//
+//  Production.xcconfig
+//  StockTracker
+//
+//  Created by Jameel Shehadeh on 04/04/2026.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
+
+// MARK: - Replace with real socket url
+SOCKET_BASE_URL = wss:/$()/ws.postman-echo.com/raw
