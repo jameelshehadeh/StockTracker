@@ -26,8 +26,10 @@ struct StockDetailView: View {
             Text(stock.description)
                 .font(.body)
                 .padding()
-            
         }
+        .onChange(of: viewModel.stocks, {
+            viewModel.updateIfNeeded()
+        })
         .navigationTitle(viewModel.stock.symbol)
     }
 }

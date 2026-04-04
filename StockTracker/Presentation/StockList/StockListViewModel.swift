@@ -21,7 +21,7 @@ final class StockListViewModel {
         appState.connectionState
     }
     
-    private let appState: SharedStateService
+    private(set) var appState: SharedStateService
     private let stockFeedUseCase: StockFeedUseCase
     
     init(appState: SharedStateService, stockFeedUseCase: StockFeedUseCase) {

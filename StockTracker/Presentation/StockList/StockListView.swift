@@ -30,7 +30,7 @@ struct StockListView: View {
             .navigationDestination(for: MainNavigationDestination.self) { destination in
                 switch destination {
                 case .stockDetail(stock: let stock):
-                    StockDetailView(viewModel: .init(stock: stock))
+                    StockDetailView(viewModel: .init(appState: viewModel.appState, stock: stock))
                 }
             }
             .navigationTitle("Stocks")
