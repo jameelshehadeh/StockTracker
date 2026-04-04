@@ -46,6 +46,16 @@ final class StockRepositoryImpl: StockRepository {
     }
     
     func startPriceFeed(with symbols: [String]) async throws {
+        try await connectAndListen()
+        startRandomStockGeneration(symbols)
+    }
+    
+    func stopPriceFeed() {
+        stopRandomStockGeneration()
+        stopListening()
+    }
+    
+    func connectAndListen() async throws {
         try await webSocketClient.connect()
         wsTask = Task { [weak self] in
             guard let self else { return }
@@ -55,32 +65,37 @@ final class StockRepositoryImpl: StockRepository {
                 }
             }
         }
-        randomGenerator.start(symbols: symbols) { [weak self] stock in
-            guard let self else { return }
-            self.sendPriceUpdate(stock)
-        }
     }
     
-    private func sendPriceUpdate(_ stock: Stock) {
-        Task {
-            let update = PriceUpdate(symbol: stock.symbol, price: stock.price)
-            do {
-                let data = try JSONEncoder().encode(update)
-                if let message = String(data: data, encoding: .utf8) {
-                    try await webSocketClient.send(message)
-                }
-            } catch {
-                print("Encoding error: \(error)")
+    func stopListening(){
+        wsTask?.cancel()
+        wsTask = nil
+        webSocketClient.disconnect()
+    }
+    
+    func startRandomStockGeneration(_ symbols: [String]){
+        randomGenerator.start(symbols: symbols) { [weak self] stock in
+            guard let self else { return }
+            Task {
+                await self.sendPriceUpdate(stock)
             }
         }
     }
     
-    func stopPriceFeed() {
+    func stopRandomStockGeneration(){
         randomGenerator.stop()
-        wsTask?.cancel()
-        wsTask = nil
-        webSocketClient.disconnect()
-        continuation?.finish()
+    }
+    
+    private func sendPriceUpdate(_ stock: Stock) async {
+        let update = PriceUpdate(symbol: stock.symbol, price: stock.price)
+        do {
+            let data = try JSONEncoder().encode(update)
+            if let message = String(data: data, encoding: .utf8) {
+                try await webSocketClient.send(message)
+            }
+        } catch {
+            print("Encoding error: \(error)")
+        }
     }
     
     private func decode(_ message: String) -> Stock? {
