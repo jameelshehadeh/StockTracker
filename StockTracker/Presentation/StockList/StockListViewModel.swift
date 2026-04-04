@@ -12,11 +12,6 @@ import Foundation
 @Observable
 final class StockListViewModel {
     
-    enum SortOption {
-        case byPrice
-        case byPriceChange
-    }
-
     private(set) var stocks: [Stock] = []
     var selectedSortOption: SortOption = .byPrice
     private var isObserving = false

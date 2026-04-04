@@ -52,7 +52,9 @@ struct StockListView: View {
                     connectionStatusView
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    sortMenu
+                    CustomSortMenu(selectedSortType: viewModel.selectedSortOption) { selectedSortOption in
+                        viewModel.sort(by: selectedSortOption)
+                    }
                 }
             }
             .task {
@@ -68,24 +70,6 @@ struct StockListView: View {
                 .frame(width: 10, height: 10)
             Text(viewModel.connectionState == .connected ? "Connected" : "Disconnected")
                 .font(.caption)
-        }
-    }
-    
-    private var sortMenu: some View {
-        Menu {
-            Button("By Price") {
-                viewModel.sort(by: .byPrice)
-            }
-            Button("By Price Change") {
-                viewModel.sort(by: .byPriceChange)
-            }
-        } label: {
-            HStack {
-                Image(systemName: "arrow.up.arrow.down")
-                    .font(.system(size: 14))
-                Text("Sort")
-                    .fontWeight(.bold)
-            }
         }
     }
     
