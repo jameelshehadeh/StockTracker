@@ -1,8 +1,8 @@
 [
     { "symbol": "AAPL", "name": "Apple Inc.", "price": 172.5, "description": "Apple designs and sells consumer electronics, software and services." },
-    { "symbol": "GOOG", "name": "Alphabet Inc.", "price": 2850.4, "description": "Alphabet is the parent company of Google and various subsidiaries." },
+    { "symbol": "GOOG", "name": "Alphabet Inc.", "price": 285.4, "description": "Alphabet is the parent company of Google and various subsidiaries." },
     { "symbol": "TSLA", "name": "Tesla Inc.", "price": 215.3, "description": "Tesla designs and manufactures electric vehicles and energy solutions." },
-    { "symbol": "AMZN", "name": "Amazon.com Inc.", "price": 3450.0, "description": "Amazon is a global e-commerce and cloud computing company." },
+    { "symbol": "AMZN", "name": "Amazon.com Inc.", "price": 345.0, "description": "Amazon is a global e-commerce and cloud computing company." },
     { "symbol": "MSFT", "name": "Microsoft Corp.", "price": 312.8, "description": "Microsoft develops software, services and cloud solutions." },
     { "symbol": "NVDA", "name": "NVIDIA Corp.", "price": 495.6, "description": "NVIDIA designs GPUs and system-on-chip units for gaming and AI." },
     { "symbol": "META", "name": "Meta Platforms Inc.", "price": 327.4, "description": "Meta builds social media platforms and virtual reality products." },
