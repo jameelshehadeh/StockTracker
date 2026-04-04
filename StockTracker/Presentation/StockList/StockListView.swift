@@ -19,13 +19,20 @@ struct StockListView: View {
     
     var body: some View {
         NavigationStack(path: $navigator.path) {
-            List(viewModel.stocks) { stock in
-                Button {
-                    navigator.push(MainNavigationDestination.stockDetail(stock: stock))
-                } label: {
-                    StockRowView(stock: stock)
+            ZStack {
+                List(viewModel.stocks) { stock in
+                    Button {
+                        navigator.push(MainNavigationDestination.stockDetail(stock: stock))
+                    } label: {
+                        StockRowView(stock: stock)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
+                if !viewModel.errorMessage.isEmpty {
+                    CustomAlertView(message: viewModel.errorMessage) {
+                        viewModel.dismissError()
+                    }
+                }
             }
             .navigationDestination(for: MainNavigationDestination.self) { destination in
                 switch destination {

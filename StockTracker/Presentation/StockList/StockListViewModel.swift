@@ -13,6 +13,7 @@ import Foundation
 final class StockListViewModel {
     
     private(set) var stocks: [Stock] = []
+    private(set) var errorMessage: String = ""
     var selectedSortOption: SortOption = .byPrice
     private var isObserving = false
     private var observationTask: Task<Void, Never>?
@@ -37,11 +38,15 @@ final class StockListViewModel {
         }
     }
     
+    func dismissError(){
+        errorMessage = ""
+    }
+    
     func startFeed() async {
         do {
             try await stockFeedUseCase.startFeed(with: stocks.map { $0.symbol })
         } catch {
-            print("Failed to start feed: \(error)")
+            errorMessage = StockListErrors.failedToStartFeed.localizedDescription
         }
     }
     
@@ -59,7 +64,7 @@ final class StockListViewModel {
             stocks = try await stockFeedUseCase.getStocks()
             applySort()
         } catch {
-            print("Failed to load stocks: \(error)")
+            errorMessage = StockListErrors.failedToLoadStocks.localizedDescription
         }
     }
     
