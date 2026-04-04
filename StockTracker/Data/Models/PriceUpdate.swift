@@ -6,7 +6,7 @@
 //
 import Foundation
 
-struct PriceUpdate: Decodable {
+struct PriceUpdate: Codable {
     let symbol: String
     let price: Double
 }

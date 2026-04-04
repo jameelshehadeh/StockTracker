@@ -12,8 +12,12 @@ final class StockFlow {
     private let appState: SharedStateService
     private let webSocketClient: WebSocketClient
     
+    private lazy var stockPriceGenerator: RandomStockGenerator = {
+        RandomStockGenerator()
+    }()
+    
     private lazy var stockRepository: StockRepository = StockRepositoryImpl(
-        webSocketClient: webSocketClient
+        webSocketClient: webSocketClient, randomGenerator: stockPriceGenerator
     )
     
     private lazy var stockFeedUseCase: StockFeedUseCase = StockFeedUseCaseImpl(

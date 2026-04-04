@@ -9,7 +9,8 @@ import Foundation
 
 final class StockRepositoryImpl: StockRepository {
     private let webSocketClient: WebSocketClient
-    private var sendTask: Task<Void, Never>?
+    private let randomGenerator: StockPriceGenerating
+    private var wsTask: Task<Void, Never>?
     private var continuation: AsyncStream<Stock>.Continuation?
     
     lazy var priceUpdates: AsyncStream<Stock> = {
@@ -17,9 +18,13 @@ final class StockRepositoryImpl: StockRepository {
             self?.continuation = continuation
         }
     }()
-    
-    init(webSocketClient: WebSocketClient) {
+
+    init(
+        webSocketClient: WebSocketClient,
+        randomGenerator: StockPriceGenerating
+    ) {
         self.webSocketClient = webSocketClient
+        self.randomGenerator = randomGenerator
     }
     
     func getStocks() async throws -> [Stock] {
@@ -42,7 +47,7 @@ final class StockRepositoryImpl: StockRepository {
     
     func startPriceFeed(with symbols: [String]) async throws {
         try await webSocketClient.connect()
-        Task { [weak self] in
+        wsTask = Task { [weak self] in
             guard let self else { return }
             for await message in self.webSocketClient.receive() {
                 if let stock = self.decode(message) {
@@ -50,16 +55,30 @@ final class StockRepositoryImpl: StockRepository {
                 }
             }
         }
-        
-        sendTask = Task { [weak self] in
+        randomGenerator.start(symbols: symbols) { [weak self] stock in
             guard let self else { return }
-            await self.sendRandomUpdates(symbols: symbols)
+            self.sendPriceUpdate(stock)
+        }
+    }
+    
+    private func sendPriceUpdate(_ stock: Stock) {
+        Task {
+            let update = PriceUpdate(symbol: stock.symbol, price: stock.price)
+            do {
+                let data = try JSONEncoder().encode(update)
+                if let message = String(data: data, encoding: .utf8) {
+                    try await webSocketClient.send(message)
+                }
+            } catch {
+                print("Encoding error: \(error)")
+            }
         }
     }
     
     func stopPriceFeed() {
-        sendTask?.cancel()
-        sendTask = nil
+        randomGenerator.stop()
+        wsTask?.cancel()
+        wsTask = nil
         webSocketClient.disconnect()
         continuation?.finish()
     }
@@ -77,15 +96,5 @@ final class StockRepositoryImpl: StockRepository {
             priceChange: 0.0,
             description: ""
         )
-    }
-    
-    private func sendRandomUpdates(symbols: [String]) async {
-        while !Task.isCancelled {
-            guard let symbol = symbols.randomElement() else { continue }
-            let price = Double(Int.random(in: 5000...50000)) / 100
-            let message = "{\"symbol\": \"\(symbol)\", \"price\": \(price)}"
-            try? await webSocketClient.send(message)
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
-        }
     }
 }
