@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		FA35070C2F82547C00EC6FA1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = FA35070B2F82547C00EC6FA1 /* README.md */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		FAE9C9DB2F7E33F7002B23A9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -25,6 +29,7 @@
 
 /* Begin PBXFileReference section */
 		FA3505DA2F823E4700EC6FA1 /* StockTracker.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = StockTracker.xctestplan; path = StockTrackerTests/StockTracker.xctestplan; sourceTree = "<group>"; };
+		FA35070B2F82547C00EC6FA1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		FAE9C9CD2F7E33F5002B23A9 /* StockTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StockTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAE9C9DA2F7E33F7002B23A9 /* StockTrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StockTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAE9C9E42F7E33F8002B23A9 /* StockTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StockTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,6 +94,7 @@
 		FAE9C9C42F7E33F5002B23A9 = {
 			isa = PBXGroup;
 			children = (
+				FA35070B2F82547C00EC6FA1 /* README.md */,
 				FA3505DA2F823E4700EC6FA1 /* StockTracker.xctestplan */,
 				FAE9C9CF2F7E33F5002B23A9 /* StockTracker */,
 				FAE9C9DD2F7E33F7002B23A9 /* StockTrackerTests */,
@@ -227,6 +233,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA35070C2F82547C00EC6FA1 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
