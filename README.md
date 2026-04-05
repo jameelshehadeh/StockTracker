@@ -9,6 +9,7 @@ StockTracker is an iOS application built to track real-time stock prices, levera
 - [Overview](#overview)  
 - [Technologies](#technologies)  
 - [Architecture](#architecture)  
+- [Snapshots](#snapshots)  
 - [Environments & Configuration](#environments--configuration)  
 - [Setup & Running](#setup--running)  
 
@@ -48,11 +49,21 @@ StockTracker follows **Clean Architecture** principles:
 
 - **Data Layer:**  
   - `StockRepository` – Handles data retrieval from local JSON or WebSocket feed.  
-  - `SharedStateService` – Observes connection state and stores the latest stock data.
-  -  **Data Source:** `stocks.json` for initial data.
+  - `SharedStateService` – Observes connection state and stores the latest stock data.  
+  - **Data Source:** `stocks.json` for initial data.
 
 - **Dependency Injection:**  
   - `DependencyContainer` – Centralized container for app dependencies, including flows, WebSocket clients, and app shared state.  
+
+---
+
+## Snapshots
+
+### Stock List View
+<img width="400" alt="Stock List Screenshot" src="https://github.com/user-attachments/assets/7607d9be-1cca-4434-a6e1-38f59253565b" />
+
+### Stock Detail View
+[Watch the Stock Detail Demo](https://github.com/user-attachments/assets/c8138016-f5bf-4355-b17e-412adf29c03c)
 
 ---
 
@@ -70,27 +81,26 @@ This setup allows switching between environments without code changes.
 ## Setup & Running
 
 1. **Clone the repository**
- 
-   ```bash
+```bash
    git clone <repository-url>
    cd StockTracker
-   ```
- 
+```
+
 2. **Open in Xcode**
- 
+
    Open `StockTracker.xcodeproj`
- 
+
 3. **Select a Scheme**
- 
+
    Choose either **Dev** or **Prod** scheme depending on the environment you want to run.
- 
+
 4. **Build & Run**
- 
+
    - Select a simulator or a connected device.
    - Press `Cmd+R` to run the app.
- 
+
 5. **Run Tests**
- 
+
    - Select the **StockTrackerTests** target.
    - Press `Cmd+U` to execute all unit tests.
    - Only unit tests run, UI tests are not required.
