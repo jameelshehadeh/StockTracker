@@ -1,0 +1,30 @@
+{
+  "configurations" : [
+    {
+      "id" : "2FFB7E29-0CBE-4831-BBD5-D05878F2C44E",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:StockTracker.xcodeproj",
+      "identifier" : "FAE9C9CC2F7E33F5002B23A9",
+      "name" : "StockTracker"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:StockTracker.xcodeproj",
+        "identifier" : "FAE9C9D92F7E33F7002B23A9",
+        "name" : "StockTrackerTests"
+      }
+    }
+  ],
+  "version" : 1
+}
